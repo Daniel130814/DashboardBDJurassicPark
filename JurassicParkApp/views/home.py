@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import threading
 from views.dinosaurios   import DinosauriosView
 from views.visitantes    import VisitantesView
 from views.cuidadores    import CuidadoresView
@@ -64,7 +65,20 @@ class HomeView:
 
     def show(self, ViewClass):
         self.clear()
-        ViewClass(self.content)
+
+        loading = ctk.CTkLabel(
+            self.content,
+            text="Cargando...",
+            font=ctk.CTkFont(size=14),
+            text_color="gray"
+        )
+        loading.pack(pady=40)
+
+        def cargar():
+            self.content.after(0, lambda: [loading.destroy(), ViewClass(self.content)])
+
+        import threading
+        threading.Thread(target=cargar, daemon=True).start()
 
     def show_home(self):
         self.clear()
